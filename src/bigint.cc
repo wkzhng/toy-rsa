@@ -67,6 +67,31 @@ BigInt &BigInt::operator+=(const BigInt &op) {
   return *this;
 }
 
+BigInt BigInt::operator*(const BigInt &op) const {
+  BigInt ret = *this;
+  ret *= op;
+  return ret;
+}
+
+BigInt &BigInt::operator*=(BigInt b) {
+  BigInt a = *this;
+  this->cells_.clear();
+
+  while (!b.cells_.empty()) {
+    if (b.cells_.front() & 1) {
+      // a * b = a + a * (b - 1)
+      *this += a;
+      b.cells_.front() &= ~1;
+    } else {
+      // a * b = (a * 2) * (b / 2)
+      a.mult_2();
+      b.div_2();
+    }
+  }
+
+  return *this;
+}
+
 size_t BigInt::get_num_bits() const {
   if (cells_.empty()) return 0;
 

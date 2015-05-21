@@ -29,20 +29,24 @@ void test_bigint_get_set() {
   }
 }
 
-void test_bigint_plus() {
-  printf("test_bigint_plus: %d iteration\n", kTestIteration);
+void test_bigint_arith() {
+  printf("test_bigint_arith: %d iteration\n", kTestIteration);
 
   for (int i = 0; i < kTestIteration; ++i) {
     uint32_t ia, ib;
     g_random.get(ia);
     g_random.get(ib);
-    uint64_t iret = static_cast<uint64_t>(ia) + static_cast<uint64_t>(ib);
 
     BigInt ba = ia;
     BigInt bb = ib;
-    BigInt bret = ba + bb;
-    BigInt bconv = iret;
+    BigInt bret, bconv;
 
+    bret = ba * bb;
+    bconv = static_cast<uint64_t>(ia) * static_cast<uint64_t>(ib);
+    assert(bret == bconv);
+
+    bret = ba + bb;
+    bconv = static_cast<uint64_t>(ia) + static_cast<uint64_t>(ib);
     assert(bret == bconv);
   }
 }
@@ -67,7 +71,7 @@ void test_bigint_cmp() {
 }
 
 void test_bigint_div_mult_2() {
-  printf("test_bigint_div_2: %d iteration\n", kTestIteration);
+  printf("test_bigint_div_mult_2: %d iteration\n", kTestIteration);
 
   for (int i = 0; i < kTestIteration; ++i) {
     uint32_t rand_val;
@@ -99,9 +103,9 @@ void test_random() {
 }
 
 int main(int argc, char *argv[]) {
+  test_bigint_arith();
   test_bigint_div_mult_2();
   test_bigint_cmp();
   test_bigint_get_set();
-  test_bigint_plus();
   return 0;
 }

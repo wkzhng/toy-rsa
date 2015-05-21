@@ -28,6 +28,9 @@ public:
   BigInt operator+(const BigInt &op) const;
   BigInt &operator+=(const BigInt &op);
 
+  BigInt operator*(const BigInt &op) const;
+  BigInt &operator*=(BigInt op);
+
   void set_bytes(void *buffer, size_t size);
   void get_bytes(void *buffer) const;
   size_t get_num_bits() const;

@@ -5,15 +5,15 @@
 #include <cassert>
 
 Random g_random;
+const int kTestIteration = 1000;
 
 void test_bigint_get_set() {
-  const int kTestIteration = 1000;
   const int kTestLength = 1024;
   printf("test_bigint_get_set: %d iteration, max length = %d\n",
          kTestIteration, kTestLength);
 
   for (int i = 0; i < kTestIteration; ++i) {
-    size_t n = g_random.get() % kTestLength + 1;
+    size_t n = g_random.get<size_t>() % kTestLength + 1;
     char buf_in[n];
     g_random.get(buf_in, n);
 
@@ -30,12 +30,12 @@ void test_bigint_get_set() {
 }
 
 void test_bigint_plus() {
-  const int kTestIteration = 1000;
   printf("test_bigint_plus: %d iteration\n", kTestIteration);
 
   for (int i = 0; i < kTestIteration; ++i) {
-    uint32_t ia = g_random.get();
-    uint32_t ib = g_random.get();
+    uint32_t ia, ib;
+    g_random.get(ia);
+    g_random.get(ib);
     uint64_t iret = static_cast<uint64_t>(ia) + static_cast<uint64_t>(ib);
 
     BigInt ba = ia;
@@ -48,12 +48,13 @@ void test_bigint_plus() {
 }
 
 void test_bigint_cmp() {
-  const int kTestIteration = 1000;
   printf("test_bigint_cmp: %d iteration\n", kTestIteration);
 
   for (int i = 0; i < kTestIteration; ++i) {
-    uint64_t ia = g_random.get();
-    uint64_t ib = g_random.get();
+    uint64_t ia, ib;
+    g_random.get(ia);
+    g_random.get(ib);
+
     BigInt ba = ia;
     BigInt bb = ib;
 
@@ -62,6 +63,21 @@ void test_bigint_cmp() {
     assert((ba == bb) == (ia == ib));
     assert((ba >= bb) == (ia >= ib));
     assert((ba <= bb) == (ia <= ib));
+  }
+}
+
+void test_bigint_div_2() {
+  printf("test_bigint_div_2: %d iteration\n", kTestIteration);
+
+  for (int i = 0; i < kTestIteration; ++i) {
+    uint64_t v;
+    g_random.get(v);
+
+    BigInt b = v;
+    b.div_2();
+
+    BigInt r = v / 2;
+    assert(r == b);
   }
 }
 
@@ -79,6 +95,7 @@ void test_random() {
 
 int main(int argc, char *argv[])
 {
+  test_bigint_div_2();
   test_bigint_cmp();
   test_bigint_get_set();
   test_bigint_plus();

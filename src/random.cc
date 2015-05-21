@@ -13,8 +13,3 @@ bool Random::get(void *buffer, size_t length) {
   return bytes_read == length;
 }
 
-size_t Random::get() {
-  size_t r;
-  get(&r, sizeof(r));
-  return r;
-}

@@ -4,15 +4,6 @@
 BigInt::BigInt() {
 }
 
-BigInt::BigInt(size_t integer) {
-  *this = integer;
-}
-
-BigInt &BigInt::operator=(size_t integer) {
-  set_bytes(&integer, sizeof(size_t));
-  return *this;
-}
-
 int BigInt::compare(const BigInt& op) const {
   if (this->cells_.size() < op.cells_.size()) return -1;
   if (this->cells_.size() > op.cells_.size()) return +1;
@@ -54,7 +45,7 @@ BigInt BigInt::operator+(const BigInt &op) const {
 }
 
 BigInt &BigInt::operator+=(const BigInt &op) {
-  if (op.cells_.size() == 0) return *this;
+  if (op.cells_.empty()) return *this;
 
   auto min_new_size = max(cells_.size(), op.cells_.size());
   cells_.reserve(min_new_size + 1); // max new size: have a carry bit
@@ -77,7 +68,7 @@ BigInt &BigInt::operator+=(const BigInt &op) {
 }
 
 size_t BigInt::get_num_bits() const {
-  if (cells_.size() == 0) return 0;
+  if (cells_.empty()) return 0;
 
   Cell last = cells_.back();
   Cell mask = 1 << (kCellBitsNum - 1);
@@ -94,7 +85,7 @@ size_t BigInt::get_num_bytes() const {
 }
 
 void BigInt::get_bytes(void *buffer) const {
-  if (cells_.size() == 0) return;
+  if (cells_.empty()) return;
 
   auto buf = reinterpret_cast<uint8_t *>(buffer);
   auto last = cells_.end(); --last;
@@ -146,3 +137,29 @@ void BigInt::set_bytes(void *buffer, size_t size) {
 
   if (remain != 0) cells_.push_back(cell_val);
 }
+
+void BigInt::div_2() {
+  if (cells_.empty()) return;
+
+  // first move the highest bit and remove it if needed
+  auto i = cells_.rbegin();
+  auto val = *i;
+  auto carry = val & 1;
+  val >>= 1;
+
+  if (val == 0) {
+    cells_.pop_back();
+    i = cells_.rbegin();
+  } else {
+    *i = val;
+    ++i;
+  }
+
+  for (; i != cells_.rend(); ++i) {
+    val = (*i >> 1) + (carry << (kCellBitsNum - 1));  // new value
+    carry = *i & 1;                                   // new carry
+    *i = val;
+  }
+}
+
+

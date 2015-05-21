@@ -162,4 +162,15 @@ void BigInt::div_2() {
   }
 }
 
+void BigInt::mult_2() {
+  if (cells_.empty()) return;
 
+  Cell carry = 0;
+  for (auto i = cells_.begin(); i != cells_.end(); ++i) {
+    auto new_carry = *i >> (kCellBitsNum - 1);
+    *i = (*i << 1) + carry;
+    carry = new_carry;
+  }
+
+  if (carry) cells_.push_back(carry);
+}

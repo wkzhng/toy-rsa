@@ -66,18 +66,23 @@ void test_bigint_cmp() {
   }
 }
 
-void test_bigint_div_2() {
+void test_bigint_div_mult_2() {
   printf("test_bigint_div_2: %d iteration\n", kTestIteration);
 
   for (int i = 0; i < kTestIteration; ++i) {
-    uint64_t v;
-    g_random.get(v);
+    uint32_t rand_val;
+    g_random.get(rand_val);
 
-    BigInt b = v;
-    b.div_2();
+    BigInt test_val = rand_val;
+    test_val.div_2();
 
-    BigInt r = v / 2;
-    assert(r == b);
+    BigInt std_val = rand_val / 2;
+    assert(std_val == test_val);
+
+    std_val = static_cast<uint64_t>(rand_val) * 2;
+    test_val = rand_val;
+    test_val.mult_2();
+    assert(std_val == test_val);
   }
 }
 
@@ -93,9 +98,8 @@ void test_random() {
   printf("\n");
 }
 
-int main(int argc, char *argv[])
-{
-  test_bigint_div_2();
+int main(int argc, char *argv[]) {
+  test_bigint_div_mult_2();
   test_bigint_cmp();
   test_bigint_get_set();
   test_bigint_plus();

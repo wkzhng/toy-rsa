@@ -34,6 +34,7 @@ public:
   size_t get_num_bytes() const;
 
   void div_2();
+  void mult_2();
 };
 
 template<typename T> BigInt::BigInt(T integer) {

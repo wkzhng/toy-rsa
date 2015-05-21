@@ -4,18 +4,18 @@
 #include <cstring>
 #include <cassert>
 
-void test_bigint_get_set() {
-  Random random(Random::kInsecure);
+Random g_random;
 
+void test_bigint_get_set() {
   const int kTestIteration = 1000;
   const int kTestLength = 1024;
   printf("test_bigint_get_set: %d iteration, max length = %d\n",
          kTestIteration, kTestLength);
 
   for (int i = 0; i < kTestIteration; ++i) {
-    size_t n = random.get() % kTestLength + 1;
+    size_t n = g_random.get() % kTestLength + 1;
     char buf_in[n];
-    random.get(buf_in, n);
+    g_random.get(buf_in, n);
 
     BigInt bi;
     bi.set_bytes(buf_in, n);
@@ -31,13 +31,12 @@ void test_bigint_get_set() {
 
 void test_bigint_plus() {
   const int kTestIteration = 1000;
-  printf("test_bigint_plus: %d iteration", kTestIteration);
+  printf("test_bigint_plus: %d iteration\n", kTestIteration);
 
-  Random random(Random::kInsecure);
-  for (int i = 0; i < 1000; ++i) {
-    uint16_t ia = random.get();
-    uint16_t ib = random.get();
-    uint64_t iret = ia + ib;
+  for (int i = 0; i < kTestIteration; ++i) {
+    uint32_t ia = g_random.get();
+    uint32_t ib = g_random.get();
+    uint64_t iret = static_cast<uint64_t>(ia) + static_cast<uint64_t>(ib);
 
     BigInt ba = ia;
     BigInt bb = ib;
@@ -48,14 +47,31 @@ void test_bigint_plus() {
   }
 }
 
+void test_bigint_cmp() {
+  const int kTestIteration = 1000;
+  printf("test_bigint_cmp: %d iteration\n", kTestIteration);
+
+  for (int i = 0; i < kTestIteration; ++i) {
+    uint64_t ia = g_random.get();
+    uint64_t ib = g_random.get();
+    BigInt ba = ia;
+    BigInt bb = ib;
+
+    assert((ba < bb) == (ia < ib));
+    assert((ba > bb) == (ia > ib));
+    assert((ba == bb) == (ia == ib));
+    assert((ba >= bb) == (ia >= ib));
+    assert((ba <= bb) == (ia <= ib));
+  }
+}
+
 void test_random() {
   constexpr int kNum = 10;
-  printf("test_bigint_get_set: showing %d random bytes:\n", kNum);
+  printf("test_bigint_get_set: showing %d g_random bytes:\n", kNum);
 
-  Random random;
   for (int i = 0; i < kNum; ++i) {
     unsigned char v;
-    random.get(&v, sizeof(v));
+    g_random.get(&v, sizeof(v));
     printf("%x ", v);
   }
   printf("\n");
@@ -63,6 +79,7 @@ void test_random() {
 
 int main(int argc, char *argv[])
 {
+  test_bigint_cmp();
   test_bigint_get_set();
   test_bigint_plus();
   return 0;

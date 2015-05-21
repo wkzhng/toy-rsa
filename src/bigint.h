@@ -18,7 +18,12 @@ public:
   BigInt(size_t integer);
   BigInt &operator=(size_t integer);
 
+  int compare(const BigInt& op) const;
   bool operator==(const BigInt& op) const;
+  bool operator<(const BigInt& op) const;
+  bool operator<=(const BigInt& op) const;
+  bool operator>(const BigInt& op) const;
+  bool operator>=(const BigInt& op) const;
 
   BigInt operator+(const BigInt &op) const;
   BigInt &operator+=(const BigInt &op);

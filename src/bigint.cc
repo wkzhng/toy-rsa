@@ -13,10 +13,38 @@ BigInt &BigInt::operator=(size_t integer) {
   return *this;
 }
 
+int BigInt::compare(const BigInt& op) const {
+  if (this->cells_.size() < op.cells_.size()) return -1;
+  if (this->cells_.size() > op.cells_.size()) return +1;
+
+  auto pthis = cells_.crbegin();
+  auto pthat = op.cells_.crbegin();
+  for (;pthis != cells_.rend(); ++pthis, ++pthat) {
+    if (*pthis < *pthat) return -1;
+    if (*pthis > *pthat) return +1;
+  }
+
+  return 0;
+}
 
 bool BigInt::operator==(const BigInt& op) const {
-  if (this->cells_.size() != op.cells_.size()) return false;
-  return equal(this->cells_.begin(), this->cells_.end(), op.cells_.begin());
+  return compare(op) == 0;
+}
+
+bool BigInt::operator<(const BigInt& op) const {
+  return compare(op) < 0;
+}
+
+bool BigInt::operator>(const BigInt& op) const {
+  return compare(op) > 0;
+}
+
+bool BigInt::operator<=(const BigInt& op) const {
+  return compare(op) <= 0;
+}
+
+bool BigInt::operator>=(const BigInt& op) const {
+  return compare(op) >= 0;
 }
 
 BigInt BigInt::operator+(const BigInt &op) const {
